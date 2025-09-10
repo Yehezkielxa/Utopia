@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2-Player Counter App</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+    }
+    .player {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border-right: 2px solid #333;
+    }
+    .player:last-child {
+      border-right: none;
+    }
+    .counter {
+      width: 90%;
+      margin: 10px;
+      background: #222;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      font-size: 2rem;
+      user-select: none;
+    }
+    .half {
+      flex: 1;
+      padding: 20px;
+      text-align: center;
+    }
+    .half.left {
+      background: #333;
+    }
+    .half.right {
+      background: #444;
+    }
+    .label {
+      font-size: 1rem;
+      background: #555;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="player" id="p1">
+    <div class="counter" data-player="1" data-type="power"><div class="half left">Power<br><span>0</span></div><div class="half right">+</div></div>
+    <div class="counter" data-player="1" data-type="armor"><div class="half left">Armor<br><span>0</span></div><div class="half right">+</div></div>
+    <div class="counter" data-player="1" data-type="health"><div class="half left">Health<br><span>20</span></div><div class="half right">+</div></div>
+    <div class="counter" data-player="1" data-type="energy"><div class="half left">Energy<br><span>0</span></div><div class="half right">+</div></div>
+    <div class="counter"><div class="label">Damage: <span id="p1-dmg">0</span></div></div>
+  </div>
+
+  <div class="player" id="p2">
+    <div class="counter" data-player="2" data-type="power"><div class="half left">Power<br><span>0</span></div><div class="half right">+</div></div>
+    <div class="counter" data-player="2" data-type="armor"><div class="half left">Armor<br><span>0</span></div><div class="half right">+</div></div>
+    <div class="counter" data-player="2" data-type="health"><div class="half left">Health<br><span>20</span></div><div class="half right">+</div></div>
+    <div class="counter" data-player="2" data-type="energy"><div class="half left">Energy<br><span>0</span></div><div class="half right">+</div></div>
+    <div class="counter"><div class="label">Damage: <span id="p2-dmg">0</span></div></div>
+  </div>
+
+  <script>
+    const counters = {
+      1: { power: 0, armor: 0, health: 20, energy: 0 },
+      2: { power: 0, armor: 0, health: 20, energy: 0 }
+    };
+
+    function updateDamage() {
+      const dmg1 = Math.ceil(counters[1].power / Math.max(1, counters[2].armor));
+      const dmg2 = Math.ceil(counters[2].power / Math.max(1, counters[1].armor));
+      document.getElementById("p1-dmg").innerText = dmg1;
+      document.getElementById("p2-dmg").innerText = dmg2;
+    }
+
+    document.querySelectorAll(".counter").forEach(counter => {
+      const player = counter.dataset.player;
+      const type = counter.dataset.type;
+      if (!player || !type) return;
+
+      const left = counter.querySelector(".half.left");
+      const right = counter.querySelector(".half.right");
+      const valueSpan = left.querySelector("span");
+
+      left.addEventListener("click", () => {
+        counters[player][type]--;
+        valueSpan.innerText = counters[player][type];
+        updateDamage();
+      });
+
+      right.addEventListener("click", () => {
+        counters[player][type]++;
+        valueSpan.innerText = counters[player][type];
+        updateDamage();
+      });
+    });
+  </script>
+</body>
+</html>
